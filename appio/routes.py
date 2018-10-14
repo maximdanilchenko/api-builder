@@ -1,3 +1,4 @@
+from typing import Union
 from parse import compile
 
 
@@ -29,7 +30,7 @@ class Route:
         self.compiled = None
 
 
-def group(routes=None, *, prefix=""):
+def group(*routes: Union[Route, RoutesGroup], prefix: str="", middlewares=None):
     if not routes:
         raise Exception()
     return RoutesGroup(prefix, routes)

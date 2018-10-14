@@ -1,15 +1,18 @@
+from typing import Dict
 from json import dumps
 
 
 class Response:
-    def __init__(self, json=None, *, status=200, headers=None, body=b""):
+    def __init__(
+        self, json=None, *, status=200, headers: Dict[str, str] = None, body=b""
+    ):
         if json and body:
-            raise Exception
+            raise Exception()
 
         self.status = status
 
         if headers is None:
-            self.headers = []
+            self.headers = {}
         else:
             self.headers = headers
 
@@ -17,5 +20,3 @@ class Response:
             self.body = dumps(json).encode()
         else:
             self.body = body
-
-        self._stream = None

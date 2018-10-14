@@ -1,6 +1,6 @@
+from typing import Optional
 from appio.request import Request
-from appio.response import Response
-from appio.routes import RoutesGroup
+from appio.routes import RoutesGroup, Route
 
 
 class App:
@@ -8,6 +8,13 @@ class App:
         self.routes = routes_group
 
         self._prepared = False
+
+    def find_route(self, path: str) -> (Optional[Route], dict):
+        for route in self.routes.routes:
+            parse_result = route.compiled.parse(path)
+            if parse_result:
+                return route, parse_result.named
+        return None, {}
 
     def __call__(self, scope):
         return Connection(scope, self)
@@ -19,24 +26,8 @@ class Connection:
         if scope["type"] != "http":
             raise NotImplementedError()
 
-        self.app = app
-        self.request = Request(app=app, **scope)
-
-    def find_route(self):
-        for route in self.app.routes.routes:
-            parse_result = route.compiled.parse(self.request.path)
-            if parse_result:
-                self.request.path_params = parse_result.named
-                return route
+        route, path_params = app.find_route(scope['path'])
+        self.request = Request(app=app, route=route, path_params=path_params, **scope)
 
     async def __call__(self, receive, send):
-        self.request._stream = (receive, send)
-
-        route = self.find_route()
-        if route:
-            response = await route.handler(self.request)
-        else:
-            response = Response("Not Found", status=404)
-
-        await self.request.respond(response)
-
+        await self.request(receive, send)
