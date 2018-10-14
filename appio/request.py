@@ -6,6 +6,7 @@ class Request:
 
     def __init__(self, app, headers, method, path, query_string, **_):
         self.app = app
+        # TODO: parse headers
         self.headers = headers
         self.method = method
         self.path = path
