@@ -1,6 +1,7 @@
 import json
 from typing import List, Dict, Tuple
 from urllib.parse import parse_qs
+from functools import partial
 
 from multidict import CIMultiDict
 
@@ -19,7 +20,6 @@ class Request:
         self.query_params = parse_qs(query_string.decode())
         self.path_params = path_params
         self._route = route
-        self.schema = None
         self.body = None
         self._json = None
         self._receive = None
@@ -47,14 +47,14 @@ class Request:
         self.body = b"".join(body)
 
     async def json(self, schema=None):
-        if self._json:
+        if self._json is not None:
             return self.json
 
         if not self.body:
             await self.read()
 
         if schema is None:
-            schema = self.schema
+            schema = self._route.schema
 
         self._json = json.loads(self.body.decode())
 
@@ -87,7 +87,10 @@ class Request:
         self._send = send
 
         if self._route:
-            response = await self._route.handler(self)
+            handler = self._route.handler
+            for m in self._route.middlewares:
+                handler = partial(m, handler=handler)
+            response = await handler(self)
         else:
             response = Response("Not Found", status=404)
 

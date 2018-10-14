@@ -3,18 +3,20 @@ from parse import compile
 
 
 class RoutesGroup:
-    def __init__(self, prefix, routes):
+    def __init__(self, prefix, routes, middlewares=None):
         self.prefix = prefix
-        self.routes = self.flatten(routes)
+        self.routes = self.flatten(routes, middlewares)
 
-    def flatten(self, routes):
+    def flatten(self, routes, middlewares=None):
         # TODO: check that all routes are unique within one method
         flatten_routes = []
         for r in routes:
             if isinstance(r, RoutesGroup):
                 flatten_routes.extend(r.routes)
             elif isinstance(r, Route):
+                # TODO: write query parser instead of using parse lib
                 r.compiled = compile(self.prefix + r.path)
+                r.middlewares = middlewares
                 flatten_routes.append(r)
             else:
                 raise Exception()
@@ -23,17 +25,18 @@ class RoutesGroup:
 
 class Route:
     def __init__(self, method, path, handler, schema):
-        self.method = method
+        self.method = method.upper()
         self.path = path
         self.handler = handler
         self.schema = schema
         self.compiled = None
+        self.middlewares = None
 
 
 def group(*routes: Union[Route, RoutesGroup], prefix: str="", middlewares=None):
     if not routes:
         raise Exception()
-    return RoutesGroup(prefix, routes)
+    return RoutesGroup(prefix, routes, middlewares)
 
 
 def route(method, path, handler, schema=None):

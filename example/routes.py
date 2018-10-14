@@ -2,6 +2,7 @@ from appio.routes import group, get, post
 
 from .views import v1, v2
 from .schemas import Person
+from .middlewares import some_middleware
 
 api_routes = group(
     group(
@@ -14,5 +15,6 @@ api_routes = group(
         get("/info", v2.info),
         get("/info/{name}", v2.info_named),
         prefix="/v2",
+        middlewares=[some_middleware]
     ),
 )
