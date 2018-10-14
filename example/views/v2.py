@@ -17,6 +17,7 @@ async def info(request: Request):
 
 
 async def info_named(request: Request):
+    print('Code before response!')
     response = Response({"name": request.path_params.get("name")})
     await request.respond(response)
     print('Code after response!')

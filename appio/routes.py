@@ -1,5 +1,9 @@
 from typing import Union
 from parse import compile
+from appio.parse import join_paths
+
+
+__all__ = ["group", "route", "get", "put", "post", "delete", "patch"]
 
 
 class RoutesGroup:
@@ -15,7 +19,7 @@ class RoutesGroup:
                 flatten_routes.extend(r.routes)
             elif isinstance(r, Route):
                 # TODO: write query parser instead of using parse lib
-                r.compiled = compile(self.prefix + r.path)
+                r.compiled = compile(join_paths([self.prefix, r.path]))
                 r.middlewares = middlewares
                 flatten_routes.append(r)
             else:
@@ -33,7 +37,7 @@ class Route:
         self.middlewares = None
 
 
-def group(*routes: Union[Route, RoutesGroup], prefix: str="", middlewares=None):
+def group(*routes: Union[Route, RoutesGroup], prefix: str = "", middlewares=None):
     if not routes:
         raise Exception()
     return RoutesGroup(prefix, routes, middlewares)
@@ -44,20 +48,20 @@ def route(method, path, handler, schema=None):
 
 
 def get(path, handler, schema=None):
-    return Route('GET', path, handler, schema)
+    return Route("GET", path, handler, schema)
 
 
 def put(path, handler, schema=None):
-    return Route('PUT', path, handler, schema)
+    return Route("PUT", path, handler, schema)
 
 
 def post(path, handler, schema=None):
-    return Route('POST', path, handler, schema)
+    return Route("POST", path, handler, schema)
 
 
 def delete(path, handler, schema=None):
-    return Route('DELETE', path, handler, schema)
+    return Route("DELETE", path, handler, schema)
 
 
 def patch(path, handler, schema=None):
-    return Route('PATCH', path, handler, schema)
+    return Route("PATCH", path, handler, schema)
