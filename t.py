@@ -19,17 +19,20 @@ async def what_time(request: Request):
     print(request.headers)
     print(request.path)
     print(request.method)
-    print(request.params)
+    print(request.query_params)
     print(request.path_params)
     return Response(f"{time.time()}")
 
 
 def create_app():
     app = App()
-    app.routes = [
+    app.routes = routes.group([
         routes.post("/hello", hello, schema=Person),
         routes.get("/time/{when}", what_time),
-    ]
+        routes.group(prefix="/v1", routes=[
+            routes.get("/grouped", what_time)
+        ])
+    ])
     create_spec(app)
     return app
 

@@ -19,11 +19,3 @@ class Response:
             self.body = body
 
         self._stream = None
-
-    async def respond(self):
-        await self._stream({"type": "http.response.start",
-                            "status": self.status,
-                            "headers": self.headers})
-        await self._stream({"type": "http.response.body",
-                            "body": self.body,
-                            "more_body": False})

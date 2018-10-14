@@ -1,41 +1,42 @@
 from appio.request import Request
 from appio.response import Response
+from appio.routes import RoutesGroup
 
 
 class App:
-    def __init__(self, routes=None):
+    def __init__(self, routes_group: RoutesGroup=None):
+        self.routes = routes_group
 
-        if routes is None:
-            self.routes = []
-        else:
-            self.routes = routes
         self._prepared = False
-        self._routes = None
 
     def __call__(self, scope):
-        return AsgiProxy(scope, self)
+        return Connection(scope, self)
 
 
-class AsgiProxy:
+class Connection:
     def __init__(self, scope, app):
+
         if scope["type"] != "http":
             raise NotImplementedError()
+
         self.app = app
         self.request = Request(app=app, **scope)
 
-    async def __call__(self, receive, send):
-        self.request._stream = receive
-
-        for route in self.app.routes:
+    def find_route(self):
+        for route in self.app.routes.routes:
             parse_result = route.compiled.parse(self.request.path)
             if parse_result:
                 self.request.path_params = parse_result.named
-                response = await route.handler(self.request)
-                break
+                return route
+
+    async def __call__(self, receive, send):
+        self.request._stream = (receive, send)
+
+        route = self.find_route()
+        if route:
+            response = await route.handler(self.request)
         else:
             response = Response("Not Found", status=404)
 
-        response._stream = send
-
-        await response.respond()
+        await self.request.respond(response)
 
