@@ -4,12 +4,13 @@ from appio.routes import RoutesGroup, Route
 
 
 class App:
-    def __init__(self, routes_group: RoutesGroup = None):
-        self.routes = routes_group
-
+    def __init__(self, routes: RoutesGroup = None):
+        self.routes = routes
         self._prepared = False
 
     def find_route(self, method: str, path: str) -> (Optional[Route], dict):
+        if self.routes is None:
+            return None, {}
         for route in self.routes.routes:
             if method.upper() == route.method:
                 parse_result = route.compiled.parse(path)

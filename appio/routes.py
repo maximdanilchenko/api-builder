@@ -13,6 +13,8 @@ class RoutesGroup:
 
     def flatten(self, routes, middlewares=None):
         # TODO: check that all routes are unique within one method
+        if middlewares is None:
+            middlewares = []
         flatten_routes = []
         for r in routes:
             if isinstance(r, RoutesGroup):
