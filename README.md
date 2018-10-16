@@ -1,6 +1,6 @@
-# Appio
+# api-builder
 
-Python ASGI framework for building APIs 
+Python ASGI framework for building scalable APIs 
 
 _As for now it's in very early stage of development_
 
@@ -14,8 +14,8 @@ It's core/unique features are(will be):
 ```python
 import uvicorn
 
-from appio import App, Response
-from appio.routes import group, get
+from api_builder import App, Response
+from api_builder.routes import group, get
     
 async def hello_v1(request):
     user = request.path_params["user"]
@@ -45,9 +45,9 @@ uvicorn.run(app)
 ```python
 import uvicorn
 
-from appio import App, Response
-from appio.routes import group, get
-from appio.schema import Schema, fields, validators
+from api_builder import App, Response
+from api_builder.routes import group, get
+from api_builder.schema import Schema, fields, validators
 
 class User(Schema):
     name = fields.String(default="Unknown", allow_none=False)
