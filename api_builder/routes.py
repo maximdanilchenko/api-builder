@@ -1,6 +1,6 @@
 from typing import Union
-from parse import compile
-from api_builder.parse import join_paths
+from collections import defaultdict
+from api_builder.parsers import PathParser, join_paths
 
 
 __all__ = ["group", "route", "get", "put", "post", "delete", "patch"]
@@ -12,16 +12,19 @@ class RoutesGroup:
         self.routes = self.flatten(routes, middlewares)
 
     def flatten(self, routes, middlewares=None):
-        # TODO: check that all routes are unique within one method
         if middlewares is None:
             middlewares = []
         flatten_routes = []
+        unique_checker = defaultdict(set)
         for r in routes:
             if isinstance(r, RoutesGroup):
                 flatten_routes.extend(r.routes)
             elif isinstance(r, Route):
-                # TODO: write query parser instead of using parse lib
-                r.compiled = compile(join_paths([self.prefix, r.path]))
+                pp = PathParser(join_paths([self.prefix, r.path]))
+                if pp in unique_checker[r.method]:
+                    raise Exception()
+                unique_checker[r.method].add(pp)
+                r.compiled = pp.compiled
                 r.middlewares = middlewares
                 flatten_routes.append(r)
             else:
