@@ -1,4 +1,4 @@
-from appio.routes import group, get, post
+from api_builder.routes import group, get, post
 
 from .views import v1, v2
 from .schemas import Person

@@ -1,7 +1,7 @@
 import typing
 
-from appio.schema.fields import Field, Integer, Float, String, Boolean, List, Dict, Raw
-from appio.schema.exceptions import InitError
+from api_builder.schema.fields import Field, Integer, Float, String, Boolean, List, Dict, Raw
+from api_builder.schema.exceptions import InitError
 
 
 TYPES_MAPPING = {

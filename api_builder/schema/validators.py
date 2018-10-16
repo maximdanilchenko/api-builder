@@ -1,7 +1,7 @@
 from typing import Optional, Iterable, Any
 import re
 
-from appio.schema.exceptions import ValidationError
+from api_builder.schema.exceptions import ValidationError
 
 
 class Range:

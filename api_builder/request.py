@@ -5,7 +5,7 @@ from functools import partial
 
 from multidict import CIMultiDict
 
-from appio.response import Response
+from api_builder.response import Response
 
 
 class Request:

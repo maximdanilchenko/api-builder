@@ -1,6 +1,6 @@
 from typing import Union
 from parse import compile
-from appio.parse import join_paths
+from api_builder.parse import join_paths
 
 
 __all__ = ["group", "route", "get", "put", "post", "delete", "patch"]

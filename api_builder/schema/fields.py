@@ -1,8 +1,8 @@
 from typing import Any, Iterable, Callable
 
-from appio.schema.abc import FieldABC
-from appio.schema.exceptions import ValidationError
-from appio.schema.extras import empty, Levels
+from api_builder.schema.abc import FieldABC
+from api_builder.schema.exceptions import ValidationError
+from api_builder.schema.extras import empty, Levels
 
 
 SELF_NESTED = "self"

@@ -1,4 +1,4 @@
-from appio.schema import fields, Schema
+from api_builder.schema import fields, Schema
 
 
 class Person(Schema):

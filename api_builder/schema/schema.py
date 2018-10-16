@@ -1,9 +1,9 @@
 from typing import Iterable
 
-from appio.schema.abc import FieldABC
-from appio.schema.extras import empty, Levels
-from appio.schema.exceptions import ValidationError
-from appio.schema.typing_mapping import types_to_fields
+from api_builder.schema.abc import FieldABC
+from api_builder.schema.extras import empty, Levels
+from api_builder.schema.exceptions import ValidationError
+from api_builder.schema.typing_mapping import types_to_fields
 
 
 class SchemaMeta(type):
